@@ -1,8 +1,14 @@
-import React from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 const Home = () => {
-  console.log("Hey its me");
-  return <div className="text-5xl underline">Home</div>;
+  redirect("/login");
+
+  return (
+    <div className="ml-7">
+      <div className="text-5xl underline m-7">Home</div>
+    </div>
+  );
 };
 
 export default Home;

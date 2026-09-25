@@ -6,12 +6,15 @@ import Banner from "@/components/dashboard/Banner";
 import { Button } from "@/components/ui/button";
 import { apiFetch } from "@/lib/functions/apiFetch";
 import addApplicationImg from "@/public/assets/illustrations/add-application-illustration.webp";
+import MetricsCard from "@/components/dashboard/MetricsCard";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [dashboardData, setDashboardData] = useState({});
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null,
+  );
 
   useEffect(() => {
     getDashboardData();
@@ -19,7 +22,6 @@ const Dashboard = () => {
 
   async function getDashboardData() {
     const url = process.env.NEXT_PUBLIC_API_URL + "/dashboard";
-    const token = localStorage.getItem("accessToken");
 
     const res = await apiFetch(url, {
       method: "GET",
@@ -33,7 +35,6 @@ const Dashboard = () => {
     }
     setIsLoading(false);
   }
-
   return isLoading ? (
     <div>loading...</div>
   ) : (
@@ -61,7 +62,12 @@ const Dashboard = () => {
           </div>
         </div>
       ) : (
-        <Banner />
+        dashboardData && (
+          <div className="flex flex-col gap-5">
+            <Banner />
+            <MetricsCard metrics={dashboardData.metrics} />
+          </div>
+        )
       )}
     </>
   );

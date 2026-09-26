@@ -32,9 +32,6 @@ const SignupForm = () => {
     const response = await register(signupFormData);
 
     if (response.success) {
-      Object.entries(response.data.tokens).forEach(([key, value]: any) => {
-        localStorage.setItem(key, value);
-      });
       setSignupForm({
         name: "",
         email: "",

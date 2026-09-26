@@ -24,9 +24,6 @@ const LoginForm = () => {
     const response = await authenticateUser(loginFormData);
 
     if (response.success) {
-      Object.entries(response.data.tokens).forEach(([key, value]: any) => {
-        localStorage.setItem(key, value);
-      });
       setLoginForm({
         email: "",
         password: "",

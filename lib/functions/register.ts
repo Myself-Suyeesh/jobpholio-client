@@ -12,6 +12,7 @@ export async function register(formData: UserFormData) {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(formData),
     });
 

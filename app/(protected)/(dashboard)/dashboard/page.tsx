@@ -25,6 +25,7 @@ const Dashboard = () => {
 
     const res = await apiFetch(url, {
       method: "GET",
+      credentials: "include",
     });
     if (res.success) {
       res.data?.metrics?.totalApplications

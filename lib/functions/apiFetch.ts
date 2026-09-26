@@ -8,45 +8,29 @@ export async function apiFetch(endPoint: string, options: RequestInit) {
       headers: {
         ...(options.headers as Record<string, string>),
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     });
 
     if (response.status === 401) {
-      const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) {
-        localStorage.removeItem("accessToken");
-        return {
-          success: false,
-          error: "No refresh token available",
-        };
-      }
       const refreshResponse = await fetch(refreshTokenUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ refreshToken: refreshToken }),
+        credentials: "include",
       });
 
       if (!refreshResponse.ok) {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
         return {
           success: false,
           error: "Session expired",
         };
       }
 
-      const refreshData = await refreshResponse.json();
-      const newAccessToken = refreshData.data.accessToken;
-      localStorage.setItem("accessToken", newAccessToken);
-      localStorage.setItem("refreshToken", refreshData.data.refreshToken);
       const newOptions = {
         ...options,
         headers: {
           ...(options.headers as Record<string, string>),
-          Authorization: `Bearer ${newAccessToken}`,
         },
       };
       response = await fetch(endPoint, newOptions);

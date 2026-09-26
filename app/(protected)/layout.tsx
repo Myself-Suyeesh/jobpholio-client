@@ -18,15 +18,14 @@ export default function ProtectedLayout({
 
   async function authCheck() {
     const url = process.env.NEXT_PUBLIC_API_URL + "/auth/me";
-    const token = localStorage.getItem("accessToken");
 
     try {
       const result = await apiFetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
+        credentials: "include",
       });
 
       if (!result.success) {

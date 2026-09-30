@@ -29,6 +29,7 @@ import {
   ChartPie,
 } from "lucide-react";
 import Image from "next/image";
+import { SidebarOpt } from "./sidebar-opt";
 
 const data = {
   user: {
@@ -88,7 +89,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="flex flex-col gap-4">
+        <SidebarOpt />
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>

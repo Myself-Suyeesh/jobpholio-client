@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import ApplicationParentComponent from "@/components/applications/ApplicationTableContainer";
+import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
 
 const MyApplication = () => {
   return (
@@ -23,7 +24,8 @@ const MyApplication = () => {
           >
             Export
           </Button>
-          <Button className={"p-5!"}>Add Application</Button>
+          <AddApplicationDialog />
+          {/* <Button className={"p-5!"}>Add Application</Button> */}
         </div>
       </div>
       <ApplicationParentComponent />

@@ -25,7 +25,7 @@ const Login = () => {
           <Image
             src={supportImage}
             alt="Login Support Image"
-            className="w-full rounded-4xl"
+            className="w-full"
           />
         </div>
       </div>

@@ -19,6 +19,7 @@ import emptyCalendarIcon from "@/public/assets/empty-icons/empty-calendar.webp";
 import addApplicationIllustration from "@/public/assets/empty-icons/add-application.webp";
 import emptyActivityIcon from "@/public/assets/empty-icons/empty-activity.webp";
 import emptyAttentionIcon from "@/public/assets/empty-icons/empty-needs-attention.webp";
+import LottieLoader from "@/components/LottieLoader";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,7 +50,7 @@ const Dashboard = () => {
     setIsLoading(false);
   }
   return isLoading ? (
-    <div>loading...</div>
+    <LottieLoader />
   ) : (
     <>
       {isError ? (

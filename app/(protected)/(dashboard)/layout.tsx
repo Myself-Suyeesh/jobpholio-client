@@ -24,7 +24,7 @@ export default function ProtectedLayout({
           <AppSidebar />
           <SidebarInset className="h-screen overflow-hidden">
             <TopBar />
-            <main className="min-h-0 flex-1 overflow-y-auto p-5 gap-5">
+            <main className="min-h-0 flex-1 overflow-y-auto p-4 gap-4">
               {children}
             </main>
           </SidebarInset>

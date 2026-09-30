@@ -55,6 +55,7 @@ export async function apiFetch(endPoint: string, options: RequestInit) {
       return {
         success: true,
         data: newData.data,
+        meta: newData.meta,
       };
     }
 
@@ -75,7 +76,7 @@ export async function apiFetch(endPoint: string, options: RequestInit) {
     }
 
     const data = await response.json();
-    return { success: true, data: data.data };
+    return { success: true, data: data.data, meta: data.meta };
   } catch (error) {
     console.log("Failed to fetch data", error);
     return {

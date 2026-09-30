@@ -9,7 +9,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export function NavMain({
   items,
@@ -21,7 +22,16 @@ export function NavMain({
     isActive?: boolean;
   }[];
 }) {
-  const [activeItem, setActiveItem] = useState("Dashboard");
+  const pathName = usePathname();
+  const [activeItem, setActiveItem] = useState("");
+
+  useEffect(() => {
+    const [path] = items.filter((item) => {
+      return item.url === pathName;
+    });
+    setActiveItem(path.title);
+  }, []);
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">

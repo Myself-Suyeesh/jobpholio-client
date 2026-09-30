@@ -20,6 +20,7 @@ import addApplicationIllustration from "@/public/assets/empty-icons/add-applicat
 import emptyActivityIcon from "@/public/assets/empty-icons/empty-activity.webp";
 import emptyAttentionIcon from "@/public/assets/empty-icons/empty-needs-attention.webp";
 import LottieLoader from "@/components/LottieLoader";
+import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -158,9 +159,7 @@ const Dashboard = () => {
                       </p>
                     </div>
                     <div className="w-full flex flex-col justify-center gap-2">
-                      <Button className="w-full! rounded-md!">
-                        Add Application
-                      </Button>
+                      <AddApplicationDialog />
                       <p className="font-semibold text-sm text-sidebar-foreground!">
                         Connecting to more sources is <br /> coming soon.
                       </p>

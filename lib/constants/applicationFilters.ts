@@ -16,6 +16,6 @@ export const timeOptions = [
 export const sortOptions = [
   { label: "Most recent", value: "most_recent" },
   { label: "Oldest", value: "oldest" },
-  { label: "Company", value: "company" },
-  { label: "Role", value: "role" },
+  // { label: "Company", value: "company" },
+  // { label: "Role", value: "role" },
 ];

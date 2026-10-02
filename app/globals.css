@@ -385,15 +385,33 @@ select {
   color: var(--text-primary);
   background: var(--input-background);
 
-  border: 1px solid var(--input-border);
+  border: 1px solid var(--input-border) !important;
   border-radius: var(--radius-md);
 
   outline: none;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important; /* Removes the default blue/black outline */
+  border-color: var(
+    --input-border
+  ) !important; /* Optional: Replaces it with a custom border color */
+}
+
+.select {
+  color: var(--text-primary) !important;
+  background: var(--input-background) !important;
+
+  border: 1px solid var(--input-border) !important;
+  border-radius: var(--radius-md) !important;
+
+  outline: none !important;
 
   transition:
     border-color var(--duration-normal) var(--ease-standard),
     box-shadow var(--duration-normal) var(--ease-standard),
-    background-color var(--duration-normal) var(--ease-standard);
+    background-color var(--duration-normal) var(--ease-standard) !important;
 }
 
 input:hover,
@@ -412,6 +430,21 @@ textarea:disabled,
 select:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* Replace #ffffff with your desired input background color */
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+
+  /* Replace #000000 with your desired text color */
+  -webkit-text-fill-color: #000000 !important;
 }
 
 button {

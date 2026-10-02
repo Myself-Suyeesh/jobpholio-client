@@ -31,7 +31,7 @@ type SortOption = "most_recent" | "oldest" | "company" | "role";
 // COMPONENT
 // ==================================================
 
-const ApplicationParentComponent = () => {
+const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
   // ------------------------------------------------
   // Initial page state
   // ------------------------------------------------
@@ -96,7 +96,7 @@ const ApplicationParentComponent = () => {
 
   useEffect(() => {
     getApplicationData();
-  }, [page, limit, status, search, source, time, sort]);
+  }, [page, limit, status, search, source, time, sort, refreshKey]);
 
   async function getApplicationData() {
     const firstLoad = isInitialLoad.current;

@@ -5,6 +5,11 @@ import ApplicationParentComponent from "@/components/applications/ApplicationTab
 import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
 
 const MyApplication = () => {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleApplicationAdded = () => {
+    setRefreshKey((prev) => prev + 1);
+  };
   return (
     <div className="flex flex-col gap-4 h-[calc(100vh-100px)] overflow-y-hidden">
       <div className="flex flex-row items-center justify-between">
@@ -24,11 +29,11 @@ const MyApplication = () => {
           >
             Export
           </Button>
-          <AddApplicationDialog />
+          <AddApplicationDialog onApplicationAdded={handleApplicationAdded} />
           {/* <Button className={"p-5!"}>Add Application</Button> */}
         </div>
       </div>
-      <ApplicationParentComponent />
+      <ApplicationParentComponent refreshKey={refreshKey} />
     </div>
   );
 };

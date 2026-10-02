@@ -27,6 +27,13 @@ export type ApplicationListItem = {
   createdAt: Date;
   updatedAt: Date;
 };
+export type ApplicationItem = {
+  company: CompanyDetails;
+  job: JobDetails;
+  source: ApplicationSource;
+  dateApplied: Date;
+  status: ApplicationStatus;
+};
 
 export type CompanyDetails = {
   name: string;

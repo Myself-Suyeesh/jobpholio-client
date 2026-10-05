@@ -20,7 +20,6 @@ const metricOrder: (keyof DashboardMetrics)[] = [
   "interviewsScheduled",
 ];
 const MetricsCard = ({ metrics }: MetricsCardProps) => {
-  console.log(metrics);
   return (
     <div className="grid grid-cols-4 gap-3">
       {metricOrder.map((key) => (

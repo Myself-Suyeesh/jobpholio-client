@@ -35,7 +35,7 @@ const Dashboard = () => {
   }, []);
 
   async function getDashboardData() {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/dashboard";
+    const url = "/dashboard";
 
     const res = await apiFetch(url, {
       method: "GET",
@@ -159,7 +159,9 @@ const Dashboard = () => {
                       </p>
                     </div>
                     <div className="w-full flex flex-col justify-center gap-2">
-                      <AddApplicationDialog />
+                      <AddApplicationDialog
+                        onApplicationAdded={getDashboardData}
+                      />
                       <p className="font-semibold text-sm text-sidebar-foreground!">
                         Connecting to more sources is <br /> coming soon.
                       </p>

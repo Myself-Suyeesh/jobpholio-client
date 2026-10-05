@@ -61,11 +61,13 @@ import {
 } from "@/components/ui/popover";
 
 import { Calendar } from "@/components/ui/calendar";
-import { getNumberOrNull } from "@/lib/functions/getNumberOrNull";
+import { getNumberOrZero } from "@/lib/functions/getNumberOrZero";
 import { apiFetch } from "@/lib/functions/apiFetch";
 import {
   ApplicationItem,
-  ApplicationListItem,
+  ApplicationSource,
+  ApplicationStatus,
+  EmploymentType,
 } from "@/lib/types/application-details";
 
 function formatDate(date: Date | undefined) {
@@ -102,21 +104,23 @@ const AddApplicationDialog = ({
   onApplicationAdded: () => void;
 }) => {
   const [currency, setCurrency] = useState("INR");
-  const [employment, setEmployment] = useState<string | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
-  const [source, setSource] = useState<string | null>(null);
+  const [employment, setEmployment] = useState<EmploymentType | null>(null);
+  const [status, setStatus] = useState<ApplicationStatus | null>("applied");
+  const [source, setSource] = useState<ApplicationSource | null>("manual");
   const [errors, setErrors] = useState<FormErrors>({});
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [dialogOpen, setDialogOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
-  const [month, setMonth] = React.useState<Date | undefined>(date);
-  const [value, setValue] = React.useState(formatDate(date));
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [month, setMonth] = useState<Date | undefined>(date);
+  const [value, setValue] = useState(formatDate(date));
   const selectedCurrency = currencies.find((item) => item.code === currency);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const url = "/applications";
     const newErrors: Record<string, string> = {};
     const formData = new FormData(event.currentTarget);
     const companyName = String(formData.get("company-name") ?? "").trim();
@@ -147,38 +151,52 @@ const AddApplicationDialog = ({
     if (Object.keys(newErrors).length > 0) {
       return;
     }
+    if (source === null || status === null || date === undefined) {
+      return;
+    }
 
-    const applicationForm: any = {
+    const applicationForm: ApplicationItem = {
       company: {
-        name: formData.get("company-name"),
-        website: formData.get("company-website"),
+        name: companyName,
+        website: String(formData.get("company-website") ?? "").trim(),
       },
       job: {
-        title: formData.get("role"),
-        location: formData.get("location"),
-        employmentType: employment,
+        title: role,
+        location: String(formData.get("location") ?? "").trim(),
+        employmentType: employment ?? undefined,
+        jobUrl: String(formData.get("job-link") ?? "").trim(),
         salary: {
-          min: getNumberOrNull(formData.get("min")),
-          max: getNumberOrNull(formData.get("max")),
+          min: getNumberOrZero(formData.get("min")),
+          max: getNumberOrZero(formData.get("max")),
           currency: currency,
         },
       },
-      source: source,
+      source,
       status: status,
-      dateApplied: date,
+      dateApplied: date.toLocaleDateString("en-CA"),
     };
 
-    await createApplication(applicationForm);
+    setIsSaveDisabled(true);
+    const res = await apiFetch(url, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(applicationForm),
+    });
 
-    // Form is valid
-    console.log("Submit application");
-    // console.log("Submit application", Object.fromEntries(formData.entries()));
+    if (!res.success) {
+      setIsError(true);
+    } else {
+      setIsSuccess(true);
+      resetForm();
+      onApplicationAdded();
+    }
+    setIsSaveDisabled(false);
   };
   const resetForm = () => {
     setCurrency("INR");
     setEmployment(null);
-    setStatus(null);
-    setSource(null);
+    setStatus("applied");
+    setSource("manual");
 
     setErrors({});
 
@@ -198,24 +216,6 @@ const AddApplicationDialog = ({
       setIsError(false);
     }
   };
-
-  async function createApplication(data: ApplicationItem) {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/applications";
-
-    const res = await apiFetch(url, {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify(data),
-    });
-
-    if (!res.success) {
-      setIsError(true);
-    } else {
-      setIsSuccess(true);
-    }
-    onApplicationAdded();
-    resetForm();
-  }
 
   return (
     <Dialog open={dialogOpen} onOpenChange={handleDialogChange}>
@@ -252,8 +252,8 @@ const AddApplicationDialog = ({
                 <div className="px-5! max-h-[70vh] overflow-y-auto">
                   <FieldGroup>
                     {/* =====================================================
-                COMPANY INFORMATION
-                ===================================================== */}
+                  COMPANY INFORMATION
+                  ===================================================== */}
 
                     <div className="flex flex-col gap-4 pb-5 border-b! border-sidebar-border!">
                       <div className="flex flex-row items-center gap-6">
@@ -317,8 +317,8 @@ const AddApplicationDialog = ({
                     </div>
 
                     {/* =====================================================
-                JOB DETAILS
-                ===================================================== */}
+                  JOB DETAILS
+                  ===================================================== */}
 
                     <div className="flex flex-col gap-4 pb-5 border-b! border-sidebar-border!">
                       <div className="flex flex-row items-center gap-6">
@@ -414,7 +414,7 @@ const AddApplicationDialog = ({
                         </Field>
 
                         <Field>
-                          <Label htmlFor="salary">
+                          <Label>
                             Salary{" "}
                             <span className="text-sidebar-foreground!">
                               (optional)
@@ -469,8 +469,8 @@ const AddApplicationDialog = ({
                     </div>
 
                     {/* =====================================================
-                APPLICATION DETAILS
-                ===================================================== */}
+                  APPLICATION DETAILS
+                  ===================================================== */}
 
                     <div className="flex flex-col gap-4 pb-5">
                       <div className="flex flex-row items-center gap-6">
@@ -492,18 +492,20 @@ const AddApplicationDialog = ({
 
                       <div className="grid grid-cols-2 gap-6">
                         {/* =================================================
-                    APPLICATION DATE
-                    ================================================= */}
+                      APPLICATION DATE
+                      ================================================= */}
 
                         <Field data-invalid={!!errors.date}>
                           <FieldLabel htmlFor="date-required">
-                            Subscription Date
+                            Application Date
+                            <span className="text-destructive">*</span>
                           </FieldLabel>
 
                           <InputGroup className="h-10! border-[#d1d5db]!">
                             <InputGroupInput
                               className="h-10! rounded-br-none! rounded-tr-none! border-r-0! border-[#d1d5db]!"
                               id="date-required"
+                              readOnly
                               value={value}
                               aria-invalid={!!errors.date}
                               placeholder="June 01, 2025"
@@ -584,8 +586,8 @@ const AddApplicationDialog = ({
                         </Field>
 
                         {/* =================================================
-                    STATUS
-                    ================================================= */}
+                      STATUS
+                      ================================================= */}
 
                         <Field data-invalid={!!errors.status}>
                           <Label>
@@ -634,8 +636,8 @@ const AddApplicationDialog = ({
 
                       <div className="grid grid-cols-2 gap-6">
                         {/* =================================================
-                    SOURCE
-                    ================================================= */}
+                      SOURCE
+                      ================================================= */}
 
                         <Field data-invalid={!!errors.source}>
                           <Label>
@@ -681,8 +683,8 @@ const AddApplicationDialog = ({
                         </Field>
 
                         {/* =================================================
-                    JOB LINK
-                    ================================================= */}
+                      JOB LINK
+                      ================================================= */}
 
                         <Field>
                           <Label htmlFor="job-link">
@@ -705,21 +707,27 @@ const AddApplicationDialog = ({
                 </div>
 
                 {/* =========================================================
-            FOOTER
-            ========================================================= */}
+              FOOTER
+              ========================================================= */}
 
                 <DialogFooter className="p-5! border-t! border-sidebar-border!">
                   <DialogClose
-                    render={<Button variant="outline">Cancel</Button>}
+                    render={
+                      <Button variant="outline" disabled={isSaveDisabled}>
+                        Cancel
+                      </Button>
+                    }
                   />
 
-                  <Button type="submit">Save changes</Button>
+                  <Button type="submit" disabled={isSaveDisabled}>
+                    Save changes
+                  </Button>
                 </DialogFooter>
               </FieldGroup>
             </form>
           )
         ) : (
-          <div>Something Went Wrong, Please try again later.</div>
+          <div>Something went wrong, Please Try again later</div>
         )}
       </DialogContent>
     </Dialog>

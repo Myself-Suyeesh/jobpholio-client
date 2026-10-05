@@ -30,13 +30,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { SidebarOpt } from "./sidebar-opt";
+import { UserProfile } from "@/lib/types/user-details";
+
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  userDetails: UserProfile | null;
+};
 
 const data = {
-  user: {
-    name: "Mouni Roy",
-    email: "mouniroy@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -65,7 +65,7 @@ const data = {
     },
   ],
 };
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -91,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-4">
         <SidebarOpt />
-        <NavUser user={data.user} />
+        <NavUser user={userDetails?.identity} />
       </SidebarFooter>
     </Sidebar>
   );

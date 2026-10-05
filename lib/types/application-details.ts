@@ -22,7 +22,7 @@ export type ApplicationListItem = {
   company: CompanyDetails;
   job: JobDetails;
   source: ApplicationSource;
-  dateApplied: Date;
+  dateApplied: string;
   status: ApplicationStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -31,7 +31,7 @@ export type ApplicationItem = {
   company: CompanyDetails;
   job: JobDetails;
   source: ApplicationSource;
-  dateApplied: Date;
+  dateApplied: string;
   status: ApplicationStatus;
 };
 

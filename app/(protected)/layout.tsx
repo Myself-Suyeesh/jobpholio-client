@@ -1,8 +1,11 @@
 "use client";
 
+import { useUser } from "@/hooks/useUser";
 import { apiFetch } from "@/lib/functions/apiFetch";
+import { UserProfile } from "@/lib/types/user-details";
+import UserContext from "@/lib/utils/UserContext";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function ProtectedLayout({
   children,
@@ -10,6 +13,7 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const [isChecking, setIsChecking] = useState(true);
+  const [userInfo, setUserInfo] = useState<UserProfile | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -17,14 +21,11 @@ export default function ProtectedLayout({
   }, []);
 
   async function authCheck() {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/auth/me";
+    const url = "/auth/me";
 
     try {
       const result = await apiFetch(url, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
       });
 
@@ -33,12 +34,27 @@ export default function ProtectedLayout({
         setIsChecking(false);
         return;
       }
+
+      setUserInfo(result.data.user);
     } catch (error) {
       console.log("Failed to fetch the user", error);
+      router.push("/login");
     } finally {
       setIsChecking(false);
     }
   }
 
-  return <div>{isChecking ? "Loading..." : children}</div>;
+  if (isChecking) {
+    return <div>Loading...</div>;
+  }
+
+  if (!userInfo) {
+    return null;
+  }
+
+  return (
+    <UserContext.Provider value={{ userInfo, setUserInfo }}>
+      {children}
+    </UserContext.Provider>
+  );
 }

@@ -50,7 +50,7 @@ const SignupForm = () => {
     <>
       <form className="flex flex-col gap-3" onSubmit={handleAction}>
         <div className="w-full flex flex-col gap-1">
-          <label className="font-semibold leading-6">User Name</label>
+          <label className="font-semibold leading-6">Full Name</label>
           <input
             type="text"
             name="userName"

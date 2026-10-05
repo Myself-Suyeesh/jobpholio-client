@@ -1,9 +1,9 @@
 export async function apiFetch(endPoint: string, options: RequestInit) {
+  const apiEndPoint = process.env.NEXT_PUBLIC_API_URL + endPoint;
   const refreshTokenUrl = process.env.NEXT_PUBLIC_API_URL + "/auth/refresh";
-  const token = localStorage.getItem("accessToken");
 
   try {
-    let response = await fetch(endPoint, {
+    let response = await fetch(apiEndPoint, {
       ...options,
       headers: {
         ...(options.headers as Record<string, string>),
@@ -31,9 +31,10 @@ export async function apiFetch(endPoint: string, options: RequestInit) {
         ...options,
         headers: {
           ...(options.headers as Record<string, string>),
+          "Content-Type": "application/json",
         },
       };
-      response = await fetch(endPoint, newOptions);
+      response = await fetch(apiEndPoint, newOptions);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { apiFetch } from "@/lib/functions/apiFetch";
+import { IdentityType, UserProfile } from "@/lib/types/user-details";
 import {
   EllipsisVerticalIcon,
   CircleUserRoundIcon,
@@ -26,21 +27,13 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser({ user }: { user: IdentityType | undefined }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   let errorMessage;
 
   async function handleLogOut() {
-    const url = process.env.NEXT_PUBLIC_API_URL + "/auth/logout";
+    const url = "/auth/logout";
     const token = localStorage.getItem("refreshToken");
     const result = await apiFetch(url, {
       method: "POST",
@@ -64,13 +57,13 @@ export function NavUser({
             }
           >
             <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={user?.avatarUrl} alt={user?.name} />
               <AvatarFallback className="rounded-lg">CN</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.name}</span>
+              <span className="truncate font-medium">{user?.name}</span>
               <span className="truncate text-xs text-foreground/70">
-                {user.email}
+                {user?.email}
               </span>
             </div>
             <EllipsisVerticalIcon className="ml-auto size-4" />
@@ -85,13 +78,13 @@ export function NavUser({
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarImage src={user?.avatarUrl} alt={user?.name} />
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate font-medium">{user?.name}</span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {user.email}
+                      {user?.email}
                     </span>
                   </div>
                 </div>

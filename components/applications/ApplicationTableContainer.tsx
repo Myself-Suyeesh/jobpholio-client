@@ -218,8 +218,7 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
       // API URL
       // --------------------------------------------
 
-      const url =
-        process.env.NEXT_PUBLIC_API_URL + `/applications?${params.toString()}`;
+      const url = `/applications?${params.toString()}`;
 
       // --------------------------------------------
       // API request

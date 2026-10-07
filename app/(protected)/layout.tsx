@@ -1,11 +1,10 @@
 "use client";
 
-import { useUser } from "@/hooks/useUser";
 import { apiFetch } from "@/lib/functions/apiFetch";
 import { UserProfile } from "@/lib/types/user-details";
 import UserContext from "@/lib/utils/UserContext";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProtectedLayout({
   children,
@@ -31,7 +30,6 @@ export default function ProtectedLayout({
 
       if (!result.success) {
         router.push("/login");
-        setIsChecking(false);
         return;
       }
 

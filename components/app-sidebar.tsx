@@ -27,16 +27,19 @@ import {
   SearchIcon,
   CommandIcon,
   ChartPie,
+  LogOutIcon,
 } from "lucide-react";
 import Image from "next/image";
 import { SidebarOpt } from "./sidebar-opt";
 import { UserProfile } from "@/lib/types/user-details";
+import { apiFetch } from "@/lib/functions/apiFetch";
+import { useRouter } from "next/navigation";
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
-  userDetails: UserProfile | null;
+  userDetails: UserProfile;
 };
 
-const data = {
+export const data = {
   navMain: [
     {
       title: "Dashboard",
@@ -65,7 +68,23 @@ const data = {
     },
   ],
 };
+
 export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
+  const router = useRouter();
+
+  async function handleLogOut() {
+    const url = "/auth/logout";
+    const result = await apiFetch(url, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (!result.success) {
+      console.log("Something went wrong");
+    }
+    router.push("/login");
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -91,7 +110,16 @@ export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
       </SidebarContent>
       <SidebarFooter className="flex flex-col gap-4">
         <SidebarOpt />
-        <NavUser user={userDetails?.identity} />
+        <NavUser user={userDetails.identity} />
+        <SidebarMenuButton
+          onClick={() => {
+            handleLogOut();
+          }}
+          className=" text-destructive hover:bg-white! hover:text-destructive!"
+        >
+          <LogOutIcon />
+          Log out
+        </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>
   );

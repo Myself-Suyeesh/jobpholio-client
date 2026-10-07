@@ -1,9 +1,9 @@
 "use client";
 import { createContext, Dispatch, SetStateAction } from "react";
-import { UserProfile } from "../types/user-details";
+import { UserProfile } from "@/lib/types/user-details";
 
 type UserContextType = {
-  userInfo: UserProfile | null;
+  userInfo: UserProfile;
   setUserInfo: Dispatch<SetStateAction<UserProfile | null>>;
 };
 

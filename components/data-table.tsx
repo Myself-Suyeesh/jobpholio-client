@@ -56,7 +56,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 
 import { StatusTabs, type ApplicationStatus } from "@/lib/constants/statusTabs";
-import { ApplicationListItem } from "@/lib/types/application-details";
+import {
+  ApplicationListItem,
+  MetaData,
+  StatusCountType,
+} from "@/lib/types/application-details";
 
 import CompanyAvatar from "./applications/CompanyAvatar";
 import {
@@ -64,6 +68,7 @@ import {
   sourceOptions,
   timeOptions,
 } from "@/lib/constants/applicationFilters";
+import ApplicationTrashComponent from "./ApplicationTrashComponent";
 
 // --------------------------------------------------
 // Types
@@ -73,15 +78,6 @@ type Source = "all" | "linkedin" | "naukri" | "company_site";
 type TimeFilter = "all" | "today" | "7_days" | "30_days" | "90_days";
 
 type SortOption = "most_recent" | "oldest" | "company" | "role";
-
-type MetaData = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-};
-
-type StatusCounts = Partial<Record<ApplicationStatus, number>>;
 
 // --------------------------------------------------
 // TanStack features
@@ -161,199 +157,202 @@ const columnHelper = createColumnHelper<typeof features, ApplicationListItem>();
 // Columns
 // --------------------------------------------------
 
-const columns = columnHelper.columns([
-  columnHelper.display({
-    id: "select",
+const getColumns = (
+  data: ApplicationListItem[],
+  onDelete: (id: string) => void,
+) =>
+  columnHelper.columns([
+    columnHelper.display({
+      id: "select",
 
-    header: ({ table }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          indeterminate={
-            table.getIsSomePageRowsSelected() &&
-            !table.getIsAllPageRowsSelected()
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-          className={"border-sidebar-foreground!"}
-        />
-      </div>
-    ),
+      header: ({ table }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            indeterminate={
+              table.getIsSomePageRowsSelected() &&
+              !table.getIsAllPageRowsSelected()
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Select all"
+            className={"border-sidebar-foreground!"}
+          />
+        </div>
+      ),
 
-    cell: ({ row }) => (
-      <div className="flex items-center justify-center">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-          className={"border-sidebar-foreground!"}
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  }),
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center">
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Select row"
+            className={"border-sidebar-foreground!"}
+          />
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    }),
 
-  // ------------------------------------------------
-  // Company
-  // ------------------------------------------------
+    // ------------------------------------------------
+    // Company
+    // ------------------------------------------------
 
-  columnHelper.accessor("company", {
-    header: "Company",
+    columnHelper.accessor("company", {
+      header: "Company",
 
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <CompanyAvatar
-          companyName={row.original.company.name}
-          domain={row.original.company.website}
-          size={24}
-        />
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <CompanyAvatar
+            companyName={row.original.company.name}
+            domain={row.original.company.website}
+            size={24}
+          />
 
-        <p className="truncate font-medium">{row.original.company.name}</p>
-      </div>
-    ),
+          <p className="truncate font-medium">{row.original.company.name}</p>
+        </div>
+      ),
 
-    enableHiding: false,
-  }),
+      enableHiding: false,
+    }),
 
-  // ------------------------------------------------
-  // Role
-  // ------------------------------------------------
+    // ------------------------------------------------
+    // Role
+    // ------------------------------------------------
 
-  columnHelper.accessor((row) => row.job.title, {
-    id: "role",
+    columnHelper.accessor((row) => row.job.title, {
+      id: "role",
 
-    header: "Role",
+      header: "Role",
 
-    cell: ({ row }) => (
-      <div>
-        <p className="truncate font-medium">{row.original.job.title}</p>
+      cell: ({ row }) => (
+        <div>
+          <p className="truncate font-medium">{row.original.job.title}</p>
 
-        <p className="truncate text-sm text-muted-foreground">
-          {row.original.job.location ?? "Location not specified"}
-        </p>
-      </div>
-    ),
-  }),
+          <p className="truncate text-sm text-muted-foreground">
+            {row.original.job.location ?? "Location not specified"}
+          </p>
+        </div>
+      ),
+    }),
 
-  // ------------------------------------------------
-  // Status
-  // ------------------------------------------------
+    // ------------------------------------------------
+    // Status
+    // ------------------------------------------------
 
-  columnHelper.accessor("status", {
-    id: "status",
+    columnHelper.accessor("status", {
+      id: "status",
 
-    header: "Status",
+      header: "Status",
 
-    cell: ({ row }) => {
-      const status = row.original.status as Exclude<ApplicationStatus, "all">;
+      cell: ({ row }) => {
+        const status = row.original.status as Exclude<ApplicationStatus, "all">;
 
-      const style = statusStyles[status];
+        const style = statusStyles[status];
 
-      if (!style) {
-        return null;
-      }
+        if (!style) {
+          return null;
+        }
 
-      return (
-        <span
-          className="inline-flex w-fit items-center rounded-md px-3 py-1.5 text-xs font-medium"
-          style={{
-            backgroundColor: style.background,
-            color: style.foreground,
-            border: `0.5px solid ${style.foreground}`,
-          }}
-        >
-          {style.label}
+        return (
+          <span
+            className="inline-flex w-fit items-center rounded-md px-3 py-1.5 text-xs font-medium"
+            style={{
+              backgroundColor: style.background,
+              color: style.foreground,
+              border: `0.5px solid ${style.foreground}`,
+            }}
+          >
+            {style.label}
+          </span>
+        );
+      },
+    }),
+
+    // ------------------------------------------------
+    // Source
+    // ------------------------------------------------
+
+    columnHelper.accessor("source", {
+      id: "source",
+
+      header: "Source",
+
+      cell: ({ row }) => (
+        <span className="truncate capitalize">
+          {row.original.source.replaceAll("_", " ")}
         </span>
-      );
-    },
-  }),
+      ),
+    }),
 
-  // ------------------------------------------------
-  // Source
-  // ------------------------------------------------
+    // ------------------------------------------------
+    // Applied date
+    // ------------------------------------------------
 
-  columnHelper.accessor("source", {
-    id: "source",
+    columnHelper.accessor("dateApplied", {
+      id: "dateApplied",
 
-    header: "Source",
+      header: "Applied date",
 
-    cell: ({ row }) => (
-      <span className="truncate capitalize">
-        {row.original.source.replaceAll("_", " ")}
-      </span>
-    ),
-  }),
+      cell: ({ row }) => {
+        const date = new Date(row.original.dateApplied);
 
-  // ------------------------------------------------
-  // Applied date
-  // ------------------------------------------------
+        return (
+          <span className="truncate">
+            {date.toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+              timeZone: "UTC",
+            })}
+          </span>
+        );
+      },
+    }),
 
-  columnHelper.accessor("dateApplied", {
-    id: "dateApplied",
+    // ------------------------------------------------
+    // Updated date
+    // ------------------------------------------------
 
-    header: "Applied date",
+    columnHelper.accessor("updatedAt", {
+      id: "updatedAt",
 
-    cell: ({ row }) => {
-      const date = new Date(row.original.dateApplied);
+      header: "Last Update",
 
-      return (
-        <span className="truncate">
-          {date.toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-            timeZone: "UTC",
-          })}
-        </span>
-      );
-    },
-  }),
+      cell: ({ row }) => {
+        const date = new Date(row.original.updatedAt);
 
-  // ------------------------------------------------
-  // Updated date
-  // ------------------------------------------------
+        return (
+          <span className="truncate">
+            {date.toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })}
+          </span>
+        );
+      },
+    }),
 
-  columnHelper.accessor("updatedAt", {
-    id: "updatedAt",
+    // ------------------------------------------------
+    // Actions
+    // ------------------------------------------------
 
-    header: "Last Update",
+    columnHelper.display({
+      id: "actions",
 
-    cell: ({ row }) => {
-      const date = new Date(row.original.updatedAt);
+      header: "",
 
-      return (
-        <span className="truncate">
-          {date.toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })}
-        </span>
-      );
-    },
-  }),
-
-  // ------------------------------------------------
-  // Actions
-  // ------------------------------------------------
-
-  columnHelper.display({
-    id: "actions",
-
-    header: "",
-
-    cell: () => (
-      <Button
-        className={"disabled:cursor-not-allowed!"}
-        variant={"ghost"}
-        disabled
-      >
-        <Trash size={20} className="text-destructive" />
-      </Button>
-    ),
-  }),
-]);
+      cell: ({ row }) => (
+        <ApplicationTrashComponent
+          applicationId={row.original.id}
+          onDelete={onDelete}
+        />
+      ),
+    }),
+  ]);
 
 // ==================================================
 // DATA TABLE
@@ -362,6 +361,7 @@ const columns = columnHelper.columns([
 export function DataTable({
   data,
   handleRowClick,
+  onDelete,
 
   // Server-side state
   status,
@@ -392,7 +392,7 @@ export function DataTable({
 }: {
   data: ApplicationListItem[];
   handleRowClick: (id: string) => void;
-
+  onDelete: (id: string) => void;
   status: ApplicationStatus;
   search: string;
   source: Source;
@@ -414,7 +414,7 @@ export function DataTable({
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
 
-  statusCounts?: StatusCounts;
+  statusCounts?: StatusCountType;
 }) {
   const [columnVisibility, setColumnVisibility] =
     React.useState<ColumnVisibilityState>({});
@@ -441,6 +441,7 @@ export function DataTable({
     return () => clearTimeout(timer);
   }, [searchValue, search, onSearchChange]);
 
+  const columns = getColumns(data, onDelete);
   // ------------------------------------------------
   // Table
   // ------------------------------------------------
@@ -489,11 +490,7 @@ export function DataTable({
       return statusCounts[value];
     }
 
-    if (value === "all") {
-      return meta?.total ?? 0;
-    }
-
-    return undefined;
+    return meta?.statusCounts?.[value] ?? "NA";
   };
 
   return (

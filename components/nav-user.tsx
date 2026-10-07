@@ -16,59 +16,44 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { apiFetch } from "@/lib/functions/apiFetch";
-import { IdentityType, UserProfile } from "@/lib/types/user-details";
+import { IdentityType } from "@/lib/types/user-details";
 import {
+  ChevronRightIcon,
   EllipsisVerticalIcon,
-  CircleUserRoundIcon,
-  CreditCardIcon,
-  BellIcon,
   LogOutIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-export function NavUser({ user }: { user: IdentityType | undefined }) {
+export function NavUser({ user }: { user: IdentityType }) {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  let errorMessage;
 
-  async function handleLogOut() {
-    const url = "/auth/logout";
-    const token = localStorage.getItem("refreshToken");
-    const result = await apiFetch(url, {
-      method: "POST",
-      body: JSON.stringify({ refreshToken: token }),
-    });
-
-    if (!result.success) {
-      errorMessage = result?.error;
-    }
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    router.push("/login");
-  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger
-            render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
-            }
+            render={<SidebarMenuButton size="lg" className="hover:bg-white!" />}
+            onClick={() => {
+              router.push("/profile");
+            }}
           >
             <Avatar className="size-8 rounded-lg grayscale">
-              <AvatarImage src={user?.avatarUrl} alt={user?.name} />
-              <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+              <AvatarImage src={user.avatarUrl} alt={user.name} />
+              <AvatarFallback className="rounded-lg">
+                {user.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user?.name}</span>
+              <span className="truncate font-medium">{user.name}</span>
               <span className="truncate text-xs text-foreground/70">
                 {user?.email}
               </span>
             </div>
-            <EllipsisVerticalIcon className="ml-auto size-4" />
+            {/* <EllipsisVerticalIcon className="ml-auto size-4" /> */}
+            <ChevronRightIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent
+          {/* <DropdownMenuContent
             className="min-w-56"
             side={isMobile ? "bottom" : "right"}
             align="end"
@@ -78,13 +63,15 @@ export function NavUser({ user }: { user: IdentityType | undefined }) {
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
-                    <AvatarImage src={user?.avatarUrl} alt={user?.name} />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarImage src={user.avatarUrl} alt={user.name} />
+                    <AvatarFallback className="rounded-lg">
+                      {user.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user?.name}</span>
+                    <span className="truncate font-medium">{user.name}</span>
                     <span className="truncate text-xs text-muted-foreground">
-                      {user?.email}
+                      {user.email}
                     </span>
                   </div>
                 </div>
@@ -116,7 +103,7 @@ export function NavUser({ user }: { user: IdentityType | undefined }) {
                 Log out
               </SidebarMenuButton>
             </DropdownMenuItem>
-          </DropdownMenuContent>
+          </DropdownMenuContent> */}
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>

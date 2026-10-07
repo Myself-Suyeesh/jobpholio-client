@@ -40,7 +40,7 @@ export type UserProfile = {
 };
 
 export interface UpdateProfileRequest {
-  identity?: Partial<IdentityType>;
+  identity?: Omit<IdentityType, "email">;
   profile?: Partial<ProfileType>;
   professional?: Partial<ProfessionalType>;
   jobPreferences?: Partial<JobPreferencesType>;

@@ -101,10 +101,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
   async function getApplicationData() {
     const firstLoad = isInitialLoad.current;
 
-    // ----------------------------------------------
-    // Loading states
-    // ----------------------------------------------
-
     if (firstLoad) {
       setIsLoading(true);
     } else {
@@ -112,47 +108,23 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     }
 
     try {
-      // --------------------------------------------
-      // Build query params
-      // --------------------------------------------
-
       const params = new URLSearchParams();
 
       params.set("page", String(page));
 
       params.set("limit", String(limit));
 
-      // --------------------------------------------
-      // Status
-      // --------------------------------------------
-
-      // IMPORTANT:
-      // "all" is a frontend-only value.
-      // Never send status=all to the backend.
-
       if (status !== "all") {
         params.set("status", status);
       }
-
-      // --------------------------------------------
-      // Search
-      // --------------------------------------------
 
       if (search.trim()) {
         params.set("search", search.trim());
       }
 
-      // --------------------------------------------
-      // Source
-      // --------------------------------------------
-
       if (source !== "all") {
         params.set("source", source);
       }
-
-      // --------------------------------------------
-      // Time
-      // --------------------------------------------
 
       if (time !== "all") {
         const today = new Date();
@@ -179,10 +151,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
 
         params.set("dateTo", today.toISOString());
       }
-
-      // --------------------------------------------
-      // Sort
-      // --------------------------------------------
 
       switch (sort) {
         case "most_recent":
@@ -214,24 +182,12 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
           break;
       }
 
-      // --------------------------------------------
-      // API URL
-      // --------------------------------------------
-
       const url = `/applications?${params.toString()}`;
-
-      // --------------------------------------------
-      // API request
-      // --------------------------------------------
 
       const res = await apiFetch(url, {
         method: "GET",
         credentials: "include",
       });
-
-      // --------------------------------------------
-      // Success
-      // --------------------------------------------
 
       if (res.success) {
         const applications = res.data ?? [];
@@ -267,9 +223,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     } finally {
       if (firstLoad) {
         setIsLoading(false);
-
-        // From now on, filters/pagination
-        // should only show table loading.
         isInitialLoad.current = false;
       } else {
         setIsTableLoading(false);
@@ -369,6 +322,10 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     setSelectedApplication(null);
   }
 
+  const handleApplicationDelete = (id: string) => {
+    getApplicationData();
+  };
+
   // ==================================================
   // INITIAL FULL PAGE LOADING
   // ==================================================
@@ -455,6 +412,7 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
         <DataTable
           data={applicationData}
           handleRowClick={handleClick}
+          onDelete={handleApplicationDelete}
           status={status}
           search={search}
           source={source}

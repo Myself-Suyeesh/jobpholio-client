@@ -28,7 +28,7 @@ const ApplicationDetailsComponent = ({
               />
               <div>
                 <p className="text-xl font-semibold text-primary">
-                  {applicationSelected?.company?.name}
+                  {applicationSelected?.company?.name || "NA"}
                 </p>
                 <Link
                   href={applicationSelected?.company?.website || "#"}
@@ -36,7 +36,7 @@ const ApplicationDetailsComponent = ({
                   className="flex items-center gap-2 text-primary-600! font-medium"
                 >
                   <p className="text-sm">
-                    {applicationSelected?.company?.website}
+                    {applicationSelected?.company?.website || "NA"}
                   </p>
                   <ExternalLink className="" size={12} />
                 </Link>
@@ -49,13 +49,13 @@ const ApplicationDetailsComponent = ({
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-2xl font-medium">
-              {applicationSelected?.job.title}
+              {applicationSelected?.job.title || "NA"}
             </p>
             <div className="flex gap-4">
               <div className="flex items-center gap-2 text-sidebar-foreground!">
                 <MapPin size={14} />
                 <p className="text-sm font-medium">
-                  {applicationSelected?.job.location}
+                  {applicationSelected?.job.location || "NA"}
                 </p>
               </div>
               <div className="flex items-center gap-2 text-sidebar-foreground!">
@@ -63,7 +63,7 @@ const ApplicationDetailsComponent = ({
                 <p className="text-sm font-medium">
                   {applicationSelected?.job.employmentType
                     ?.replace("_", " ")
-                    .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    .replace(/\b\w/g, (char) => char.toUpperCase()) || "NA"}
                 </p>
               </div>
             </div>

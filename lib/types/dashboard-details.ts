@@ -1,4 +1,6 @@
-type DashboardMetrics = {
+import { ApplicationListItem } from "./application-details";
+
+export type DashboardMetrics = {
   totalApplications: number;
   activeApplications: number;
   interviewsScheduled: number;
@@ -6,9 +8,9 @@ type DashboardMetrics = {
   needsAttentionCount: number;
 };
 
-type DashboardData = {
+export type DashboardData = {
   metrics: DashboardMetrics;
-  recentApplications: any[];
-  needsAttentionApplications: any[];
+  recentActivity: ApplicationListItem[];
+  needsAttentionApplications: ApplicationListItem[];
   upcomingInterviews: any[];
 };

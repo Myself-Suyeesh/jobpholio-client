@@ -29,8 +29,8 @@ export function NavMain({
     const [path] = items.filter((item) => {
       return item.url === pathName;
     });
-    setActiveItem(path.title);
-  }, []);
+    setActiveItem(path ? path.title : "");
+  }, [pathName]);
 
   return (
     <SidebarGroup>

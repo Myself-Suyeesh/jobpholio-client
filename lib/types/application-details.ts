@@ -24,6 +24,9 @@ export type ApplicationListItem = {
   source: ApplicationSource;
   dateApplied: string;
   status: ApplicationStatus;
+  latestActivity?: LatestActivity;
+  attentionReason?: string;
+  daysOnhold: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -61,4 +64,20 @@ export type MetaData = {
   limit: number;
   total: number;
   totalPages: number;
+  statusCounts: StatusCountType;
+};
+
+export type LatestActivity = {
+  title: string;
+  type: string;
+  occuredAt: string;
+};
+
+export type StatusCountType = {
+  all: number;
+  applied: number;
+  on_hold: number;
+  interview: number;
+  offer: number;
+  rejected: number;
 };

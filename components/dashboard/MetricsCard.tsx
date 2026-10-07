@@ -1,5 +1,6 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
+import { DashboardMetrics } from "@/lib/types/dashboard-details";
 
 type MetricsCardProps = {
   metrics: DashboardMetrics;
@@ -22,8 +23,8 @@ const metricOrder: (keyof DashboardMetrics)[] = [
 const MetricsCard = ({ metrics }: MetricsCardProps) => {
   return (
     <div className="grid grid-cols-4 gap-3">
-      {metricOrder.map((key) => (
-        <div key={key}>
+      {metricOrder.map((key, index) => (
+        <div key={index}>
           <Card className="rounded-md! p-4! shadow-md">
             <CardContent className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">

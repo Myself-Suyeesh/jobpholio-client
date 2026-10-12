@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   formatBytes,
@@ -28,9 +28,8 @@ export function AvatarUpload({
 }: AvatarUploadProps) {
   const [cropFile, setCropFile] = useState<FileWithPreview | null>(null);
 
-  // Prevent the cropped image from opening the crop dialog again.
   const [
-    { files, isDragging, errors },
+    { files, isDragging },
     {
       removeFile,
       replaceFile,
@@ -47,7 +46,7 @@ export function AvatarUpload({
     accept: "image/*",
     multiple: false,
 
-    // Open the crop dialog only for newly added files.
+    // Open the crop dialog when a new file is selected.
     onFilesAdded: (addedFiles) => {
       const file = addedFiles[0];
 
@@ -55,39 +54,36 @@ export function AvatarUpload({
         setCropFile(file);
       }
     },
-
-    // Handle the final file change, not crop-dialog visibility.
-    onFilesChange: (updatedFiles) => {
-      const file = updatedFiles[0];
-
-      if (!file) {
-        onFileChange?.(null);
-        return;
-      }
-
-      // Forward only the file that has been cropped.
-      // The original file is not forwarded before cropping.
-      if (
-        file.file instanceof File &&
-        file.file.name.endsWith("-cropped.jpg")
-      ) {
-        onFileChange?.(file);
-      }
-    },
   });
+
   const currentFile = files[0];
   const previewUrl = currentFile?.preview || defaultAvatar;
+
+  // Notify the parent when the selected file changes.
+  // Only forward cropped files, not the original image.
+  useEffect(() => {
+    const file = files[0];
+
+    if (!file) {
+      onFileChange?.(null);
+      return;
+    }
+
+    if (file.file instanceof File && file.file.name.endsWith("-cropped.jpg")) {
+      onFileChange?.(file);
+    }
+  }, [files, onFileChange]);
 
   const handleRemove = () => {
     if (currentFile) {
       removeFile(currentFile.id);
     }
   };
+
   const handleCropComplete = (croppedFile: File) => {
     if (!cropFile) return;
 
     replaceFile(cropFile.id, croppedFile);
-
     setCropFile(null);
   };
 
@@ -98,7 +94,7 @@ export function AvatarUpload({
 
     setCropFile(null);
 
-    // If the user cancels, remove the original image.
+    // Remove the original image if cropping is cancelled.
     if (pendingFile) {
       removeFile(pendingFile.id);
     }
@@ -106,7 +102,7 @@ export function AvatarUpload({
 
   return (
     <div className={cn("flex flex-col items-center gap-4", className)}>
-      {/* Avatar Preview */}
+      {/* Avatar preview */}
       <div className="relative">
         <div
           className={cn(
@@ -137,14 +133,14 @@ export function AvatarUpload({
           )}
         </div>
 
-        {/* Remove Button */}
+        {/* Remove button */}
         {currentFile && (
           <Button
             type="button"
             size="icon"
             variant="outline"
             onClick={handleRemove}
-            className="absolute end-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
+            className="absolute inset-e-0.5 top-0.5 z-10 size-6 rounded-full dark:bg-zinc-800 hover:dark:bg-zinc-700"
             aria-label="Remove avatar"
           >
             <XIcon className="size-3.5" />
@@ -152,10 +148,10 @@ export function AvatarUpload({
         )}
       </div>
 
-      {/* Upload Instructions */}
+      {/* Upload instructions */}
       <div className="space-y-0.5 text-center">
         <p className="text-sm font-medium">
-          {currentFile ? "Avatar uploaded" : "Upload avatar"}
+          {currentFile ? "Avatar selected" : "Upload avatar"}
         </p>
 
         <p className="text-muted-foreground text-xs">
@@ -163,15 +159,13 @@ export function AvatarUpload({
         </p>
       </div>
 
-      {/* Crop Dialog */}
+      {/* Crop dialog */}
       <ImageCropDialog
         file={cropFile}
         open={Boolean(cropFile)}
         onOpenChange={handleCropDialogChange}
         onCropComplete={handleCropComplete}
       />
-
-      {/* Keep your existing error-message UI here if needed. */}
     </div>
   );
 }

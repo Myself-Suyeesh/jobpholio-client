@@ -21,11 +21,11 @@ export type ProfessionalType = {
 };
 
 export type JobPreferencesType = {
-  roles?: string[];
-  locations?: string[];
-  workTypes?: WorkType[];
-  industries?: string[];
-  weeklyApplicationGoal?: number;
+  roles: string[];
+  locations: string[];
+  workTypes: WorkType[];
+  industries: string[];
+  weeklyApplicationGoal: number;
 };
 
 export type UserProfile = {
@@ -33,7 +33,7 @@ export type UserProfile = {
   identity: IdentityType;
   profile?: ProfileType;
   professional?: ProfessionalType;
-  jobPreferences?: JobPreferencesType;
+  jobPreferences: JobPreferencesType;
   lastLoginAt: string;
   createdAt: string;
   updatedAt: string;

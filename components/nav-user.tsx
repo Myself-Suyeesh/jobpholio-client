@@ -38,7 +38,7 @@ export function NavUser({ user }: { user: IdentityType }) {
               router.push("/profile");
             }}
           >
-            <Avatar className="size-8 rounded-lg grayscale">
+            <Avatar className="size-8 rounded-lg">
               <AvatarImage src={user.avatarUrl} alt={user.name} />
               <AvatarFallback className="rounded-lg">
                 {user.name.charAt(0).toUpperCase()}

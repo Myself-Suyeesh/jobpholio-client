@@ -541,10 +541,6 @@ export function DataTable({
           </TabsList>
         </div>
 
-        {/* ==================================================
-            FILTER / SEARCH TOOLBAR
-            ================================================== */}
-
         <div className="px-4 flex items-center gap-2">
           {/* Search */}
 
@@ -564,7 +560,7 @@ export function DataTable({
               value={searchValue}
               onChange={(event) => setSearchValue(event.target.value)}
               placeholder="Search by company, role, or keyword..."
-              className="text-sm! h-9 pl-9 bg-blue-50! border-sidebar-border!"
+              className="text-sm! h-9 pl-9 border-sidebar-border! focus:border-black! focus:ring-0!"
             />
           </div>
 

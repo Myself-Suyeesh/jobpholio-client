@@ -20,8 +20,8 @@ export default function ProtectedLayout({
     <div>
       <ThemeProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
+        defaultTheme="light"
+        // enableSystem
         disableTransitionOnChange
       >
         <SidebarProvider>

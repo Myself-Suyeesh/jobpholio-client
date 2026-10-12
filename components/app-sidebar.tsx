@@ -118,7 +118,7 @@ export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
           className=" text-destructive hover:bg-white! hover:text-destructive!"
         >
           <LogOutIcon />
-          Log out
+          Sign out
         </SidebarMenuButton>
       </SidebarFooter>
     </Sidebar>

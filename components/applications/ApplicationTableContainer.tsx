@@ -2,97 +2,39 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
 import { apiFetch } from "@/lib/functions/apiFetch";
-
 import { ApplicationListItem, MetaData } from "@/lib/types/application-details";
-
 import { type ApplicationStatus } from "@/lib/constants/statusTabs";
-
 import addApplicationImg from "@/public/assets/illustrations/add-application-illustration.webp";
-
 import { Button } from "@/components/ui/button";
-
 import ApplicationDetailsComponent from "./ApplicationDetailsComponent";
-
 import { DataTable } from "@/components/data-table";
-
-// ==================================================
-// TYPES
-// ==================================================
+import LottieLoader from "../LottieLoader";
 
 type Source = "all" | "linkedin" | "naukri" | "company_site";
-
 type TimeFilter = "all" | "today" | "7_days" | "30_days" | "90_days";
-
 type SortOption = "most_recent" | "oldest" | "company" | "role";
 
-// ==================================================
-// COMPONENT
-// ==================================================
-
 const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
-  // ------------------------------------------------
-  // Initial page state
-  // ------------------------------------------------
-
   const [isLoading, setIsLoading] = useState(true);
-
   const [isDataEmpty, setIsDataEmpty] = useState(false);
-
   const [isError, setIsError] = useState(false);
-
-  // ------------------------------------------------
-  // Table loading
-  // ------------------------------------------------
-
   const [isTableLoading, setIsTableLoading] = useState(false);
-
-  // ------------------------------------------------
-  // Application data
-  // ------------------------------------------------
-
   const [applicationData, setApplicationData] = useState<ApplicationListItem[]>(
     [],
   );
-
   const [applicationMetaData, setApplicationMetaData] =
     useState<MetaData | null>(null);
-
-  // ------------------------------------------------
-  // Selected application
-  // ------------------------------------------------
-
   const [selectedApplication, setSelectedApplication] =
     useState<ApplicationListItem | null>(null);
-
-  // ==================================================
-  // FILTER / PAGINATION STATE
-  // ==================================================
-
   const [status, setStatus] = useState<ApplicationStatus>("all");
-
   const [search, setSearch] = useState("");
-
   const [source, setSource] = useState<Source>("all");
-
   const [time, setTime] = useState<TimeFilter>("all");
-
   const [sort, setSort] = useState<SortOption>("most_recent");
-
   const [page, setPage] = useState(1);
-
   const [limit, setLimit] = useState(20);
-
-  // ------------------------------------------------
-  // Used to identify the first API request
-  // ------------------------------------------------
-
   const isInitialLoad = useRef(true);
-
-  // ==================================================
-  // FETCH APPLICATIONS
-  // ==================================================
 
   useEffect(() => {
     getApplicationData();
@@ -230,10 +172,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     }
   }
 
-  // ==================================================
-  // STATUS
-  // ==================================================
-
   const handleStatusChange = (newStatus: ApplicationStatus) => {
     setStatus(newStatus);
 
@@ -242,19 +180,11 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     setPage(1);
   };
 
-  // ==================================================
-  // SEARCH
-  // ==================================================
-
   const handleSearchChange = (value: string) => {
     setSearch(value);
 
     setPage(1);
   };
-
-  // ==================================================
-  // SOURCE
-  // ==================================================
 
   const handleSourceChange = (value: Source) => {
     setSource(value);
@@ -262,19 +192,11 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     setPage(1);
   };
 
-  // ==================================================
-  // TIME
-  // ==================================================
-
   const handleTimeChange = (value: TimeFilter) => {
     setTime(value);
 
     setPage(1);
   };
-
-  // ==================================================
-  // SORT
-  // ==================================================
 
   const handleSortChange = (value: SortOption) => {
     setSort(value);
@@ -282,27 +204,15 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     setPage(1);
   };
 
-  // ==================================================
-  // PAGE
-  // ==================================================
-
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
-
-  // ==================================================
-  // LIMIT
-  // ==================================================
 
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
 
     setPage(1);
   };
-
-  // ==================================================
-  // ROW CLICK
-  // ==================================================
 
   const handleClick = (id: string) => {
     const application = applicationData.find((item) => item.id === id);
@@ -314,10 +224,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     setSelectedApplication(application);
   };
 
-  // ==================================================
-  // CLOSE DETAILS
-  // ==================================================
-
   function handleClose() {
     setSelectedApplication(null);
   }
@@ -326,21 +232,9 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     getApplicationData();
   };
 
-  // ==================================================
-  // INITIAL FULL PAGE LOADING
-  // ==================================================
-
   if (isLoading) {
-    return (
-      <div className="flex h-[calc(100vh-100px)] items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
+    return <LottieLoader />;
   }
-
-  // ==================================================
-  // ERROR
-  // ==================================================
 
   if (isError) {
     return (
@@ -349,10 +243,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
       </div>
     );
   }
-
-  // ==================================================
-  // EMPTY STATE
-  // ==================================================
 
   if (isDataEmpty) {
     return (
@@ -382,10 +272,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
     );
   }
 
-  // ==================================================
-  // APPLICATIONS
-  // ==================================================
-
   return (
     <div
       className="
@@ -395,10 +281,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
         gap-4
       "
     >
-      {/* ============================================
-          APPLICATION TABLE
-          ============================================ */}
-
       <div
         className="
           min-h-full
@@ -431,10 +313,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
           onLimitChange={handleLimitChange}
         />
       </div>
-
-      {/* ============================================
-          APPLICATION DETAILS
-          ============================================ */}
 
       <ApplicationDetailsComponent
         applicationSelected={selectedApplication}

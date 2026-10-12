@@ -1,88 +1,67 @@
-export async function apiFetch(endPoint: string, options: RequestInit) {
-  const apiEndPoint = process.env.NEXT_PUBLIC_API_URL + endPoint;
-  const refreshTokenUrl = process.env.NEXT_PUBLIC_API_URL + "/auth/refresh";
+export async function apiFetch(endPoint: string, options: RequestInit = {}) {
+  const apiEndPoint = `${process.env.NEXT_PUBLIC_API_URL}${endPoint}`;
+  const refreshTokenUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`;
+
+  const makeRequest = (requestOptions: RequestInit) => {
+    const headers = new Headers(requestOptions.headers);
+
+    if (requestOptions.body instanceof FormData) {
+      // Let the browser set multipart/form-data and its boundary.
+      headers.delete("Content-Type");
+    } else if (requestOptions.body != null && !headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+
+    return fetch(apiEndPoint, {
+      ...requestOptions,
+      headers,
+      credentials: requestOptions.credentials ?? "include",
+    });
+  };
 
   try {
-    let response = await fetch(apiEndPoint, {
-      ...options,
-      headers: {
-        ...(options.headers as Record<string, string>),
-        "Content-Type": "application/json",
-      },
-    });
+    let response = await makeRequest(options);
 
     if (response.status === 401) {
       const refreshResponse = await fetch(refreshTokenUrl, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include",
       });
 
       if (!refreshResponse.ok) {
-        return {
-          success: false,
-          error: "Session expired",
-        };
+        return { success: false, error: "Session expired" };
       }
 
-      const newOptions = {
-        ...options,
-        headers: {
-          ...(options.headers as Record<string, string>),
-          "Content-Type": "application/json",
-        },
-      };
-      response = await fetch(apiEndPoint, newOptions);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-
-        // 2. Drill down into the specific "error.message" structure your backend sends
-
-        const errorMessage = !errorData.error.details
-          ? errorData.error?.message || `HTTP error! Status: ${response.status}`
-          : errorData.error.details[0].message ||
-            `HTTP error! Status: ${response.status}`;
-        return {
-          success: false,
-          error: errorMessage,
-        };
-      }
-
-      const newData = await response.json();
-
-      return {
-        success: true,
-        data: newData.data,
-        meta: newData.meta,
-      };
+      response = await makeRequest(options);
     }
+
+    const body = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-
-      // 2. Drill down into the specific "error.message" structure your backend sends
-
-      const errorMessage = !errorData.error.details
-        ? errorData.error?.message || `HTTP error! Status: ${response.status}`
-        : errorData.error.details[0].message ||
-          `HTTP error! Status: ${response.status}`;
-
       return {
         success: false,
-        error: errorMessage,
+        error:
+          body?.error?.details?.[0]?.message ??
+          body?.error?.message ??
+          body?.message ??
+          `HTTP error! Status: ${response.status}`,
       };
     }
 
-    const data = await response.json();
-    return { success: true, data: data.data, meta: data.meta };
+    return {
+      success: true,
+      data: body.data,
+      meta: body.meta,
+    };
   } catch (error) {
-    console.log("Failed to fetch data", error);
+    console.error("Failed to fetch data:", error);
+
     return {
       success: false,
-      error: "Something went wrong. Please try again..",
+      error: "Something went wrong. Please try again.",
     };
   }
 }

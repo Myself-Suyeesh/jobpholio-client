@@ -15,8 +15,8 @@ import ApplicationTrendsCard from "@/components/dashboard/ApplicationTrendsCard"
 import UpcomingInterviewsCard from "@/components/dashboard/UpcomingInterviewsCard";
 import RecentActivityCard from "@/components/dashboard/RecentActivityCard";
 import NeedsAttentionCard from "@/components/dashboard/NeedsAttentionCard";
-import { useUser } from "@/hooks/useUser";
 import { DashboardData } from "@/lib/types/dashboard-details";
+import { useUser } from "@/hooks/useUser";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);

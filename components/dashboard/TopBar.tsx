@@ -14,7 +14,7 @@ const TopBar = () => {
     <div className="w-full shrink-0 bg-white px-5 py-3 border-b border-solid border-sidebar-border">
       <div className="w-full flex items-center justify-between">
         <p className="text-lg font-semibold text-primary!">{pageLabel.label}</p>
-        <SearchForm />
+        {/* <SearchForm /> */}
         <ModeToggle />
       </div>
     </div>

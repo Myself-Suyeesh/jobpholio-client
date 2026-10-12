@@ -83,7 +83,7 @@ interface EditDialogComponentProps {
   user: UserProfile;
 }
 
-const EditDialogComponent = ({ user }: UserProfile) => {
+const EditDialogComponent = ({ user }: EditDialogComponentProps) => {
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");

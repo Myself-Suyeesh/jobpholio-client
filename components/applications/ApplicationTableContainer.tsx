@@ -10,12 +10,19 @@ import { Button } from "@/components/ui/button";
 import ApplicationDetailsComponent from "./ApplicationDetailsComponent";
 import { DataTable } from "@/components/data-table";
 import LottieLoader from "../LottieLoader";
+import { UserProfile } from "@/lib/types/user-details";
 
 type Source = "all" | "linkedin" | "naukri" | "company_site";
 type TimeFilter = "all" | "today" | "7_days" | "30_days" | "90_days";
 type SortOption = "most_recent" | "oldest" | "company" | "role";
 
-const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
+const ApplicationParentComponent = ({
+  refreshKey,
+  userInfo,
+}: {
+  refreshKey: number;
+  userInfo: UserProfile;
+}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDataEmpty, setIsDataEmpty] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -247,7 +254,7 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
   if (isDataEmpty) {
     return (
       <div className="flex h-[calc(100vh-100px)] flex-col items-center justify-center gap-4">
-        <p className="text-2xl">Welcome, John! 👋</p>
+        <p className="text-2xl">Welcome, {userInfo.identity.name}! 👋</p>
 
         <Image
           src={addApplicationImg}
@@ -265,8 +272,6 @@ const ApplicationParentComponent = ({ refreshKey }: { refreshKey: number }) => {
             Add your first application and keep every opportunity, update,
             interview, and next step organized in one place.
           </span>
-
-          <Button className="p-5!">Add Application</Button>
         </div>
       </div>
     );

@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import ApplicationParentComponent from "@/components/applications/ApplicationTableContainer";
 import AddApplicationDialog from "@/components/applications/AddApplicationDialog";
+import { useUser } from "@/hooks/useUser";
 
 const MyApplication = () => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const { userInfo } = useUser();
 
   const handleApplicationAdded = () => {
     setRefreshKey((prev) => prev + 1);
@@ -33,7 +35,7 @@ const MyApplication = () => {
           {/* <Button className={"p-5!"}>Add Application</Button> */}
         </div>
       </div>
-      <ApplicationParentComponent refreshKey={refreshKey} />
+      <ApplicationParentComponent refreshKey={refreshKey} userInfo={userInfo} />
     </div>
   );
 };

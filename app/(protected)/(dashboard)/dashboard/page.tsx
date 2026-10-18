@@ -70,7 +70,7 @@ const Dashboard = () => {
               Add your first application and keep every opportunity, update,
               interview, and next step organized in one place.
             </span>
-            <Button className={"p-5!"}>Add Application</Button>
+            <AddApplicationDialog onApplicationAdded={getDashboardData} />
           </div>
         </div>
       ) : (

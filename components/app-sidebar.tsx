@@ -91,7 +91,7 @@ export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem className="flex items-center justify-between">
             <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5! bg-white!"
+              className="data-[slot=sidebar-menu-button]:p-1.5! w-1/2 bg-none!"
               render={<a href="/dashboard" />}
             >
               <Image
@@ -101,7 +101,7 @@ export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
                 height={26}
               />
             </SidebarMenuButton>
-            <SidebarTrigger />
+            {/* <SidebarTrigger /> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

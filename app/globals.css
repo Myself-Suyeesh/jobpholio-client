@@ -3,6 +3,19 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --animate-marquee: marquee-loop 30s linear infinite;
+
+  @keyframes marquee-loop {
+    from {
+      transform: translateX(0%);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
 :root {
   --background: oklch(0.9847 0.0057 264.5328);
   --foreground: oklch(0.3092 0 0);

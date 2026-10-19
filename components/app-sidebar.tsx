@@ -82,7 +82,7 @@ export function AppSidebar({ userDetails, ...props }: AppSidebarProps) {
     if (!result.success) {
       console.log("Something went wrong");
     }
-    router.push("/login");
+    router.replace("/login");
   }
 
   return (

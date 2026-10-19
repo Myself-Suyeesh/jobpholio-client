@@ -29,14 +29,14 @@ export default function ProtectedLayout({
       });
 
       if (!result.success) {
-        router.push("/login");
+        router.replace("/login");
         return;
       }
 
       setUserInfo(result.data.user);
     } catch (error) {
       console.log("Failed to fetch the user", error);
-      router.push("/login");
+      router.replace("/login");
     } finally {
       setIsChecking(false);
     }

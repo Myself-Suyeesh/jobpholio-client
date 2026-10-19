@@ -1,14 +1,18 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { LandingView } from "@/components/landing/LandingView";
+import { cabin, merriweather } from "@/components/landing/fonts";
+import "@/components/landing/landing.css";
 
-const Home = () => {
-  redirect("/login");
-
-  return (
-    <div className="ml-7">
-      <div className="text-5xl underline m-7">Home</div>
-    </div>
-  );
+export const metadata: Metadata = {
+  title: "JobPholio — Keep your job search together",
+  description:
+    "Track every application, interview and follow-up in one clear workspace.",
 };
 
-export default Home;
+export default function HomePage() {
+  return (
+    <div className={`landing-root ${cabin.variable} ${merriweather.variable}`}>
+      <LandingView />
+    </div>
+  );
+}

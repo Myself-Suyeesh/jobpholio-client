@@ -38,7 +38,7 @@ const SignupForm = () => {
         password: "",
       });
       setConfirmPassword("");
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } else {
       setReqErrorMessage(response.error);
     }

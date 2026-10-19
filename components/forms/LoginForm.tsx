@@ -30,7 +30,7 @@ const LoginForm = () => {
         email: "",
         password: "",
       });
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } else {
       setReqErrorMessage(response.error);
     }
